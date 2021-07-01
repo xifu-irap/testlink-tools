@@ -63,14 +63,18 @@ class Requirement(object):
         self.xml_spec_tags = ['version', 'type', 'node_order', 'total_req']
         self.xml_spec_vals = [1, 3, 1, 0]
         self.xml_spec_dict = dict(zip(self.xml_spec_tags, self.xml_spec_vals))
-        self.spec_doc_id = version + " " + level
+        self.spec_doc_id = version + "-" + level
         
         # REQUIREMENT
         # status : D=Draft, R=Review, W=Rework, F=Finish, I= Implemented, V=Valid, N=Non Testable, O=Obsolete
         # type : 1=Informational, 2=Feature, 3=Use Case, 4=User Interface, 5=Non Functional, 6=Constraint, 7=System Function
         self.xml_req_tags = ['docid', 'title', 'version', 'revision', 'node_order', 'description', 'status', 'type', 'expected_coverage']
-        self.xml_req_vals = ['DRE-DMX-FW-REQ', 'title', 1, 1, 0, 'description', "V", 2, 0]
+        self.xml_req_vals = [self.xml_reqid, 'title', 1, 1, 0, 'description', "V", 2, 0]
         self.xml_req_dict = dict(zip(self.xml_req_tags, self.xml_req_vals))
+        
+        # REQUIREMENT_TYPE
+        # type : 1=Informational, 2=Feature, 3=Use Case, 4=User Interface, 5=Non Functional, 6=Constraint, 7=System Function
+        
 
         try:
             self.document = Document(filename)
@@ -172,8 +176,8 @@ class Requirement(object):
                                     self.xml_req_vals[1] = l[0] # Title
                                     self.xml_req_vals[0] = l[1] # Reference REQ_ID
                                     self.xml_req_vals[5] = l[2] # Description
-                                    self.xml_req_vals[7] = l[4] # Type
-                                    self.xml_req_vals[6] = l[5] # Status
+                                    self.xml_req_vals[7] = 2 # Type
+                                    self.xml_req_vals[6] = str(l[4])[0] # Status
                                     req_dict = dict(zip(self.xml_req_tags, self.xml_req_vals))
                                     self.__req_to_xml(req_dict)
 
@@ -186,24 +190,23 @@ if __name__ == '__main__':
     """
     
     import easygui
-    import os
     
-    workdir = os.path.abspath(os.getcwd())
-    path = os.path.join(workdir + os.sep + 'data' + os.sep) + "*.docx"
-    print("path=", path + "*.docx")
-
     # Select input requirement (docx file)
     filename = easygui.fileopenbox("Please select a file", default="tests/*.docx")
-    print("Filename = ", filename)
+
+    # Select the Document ID
+    docid = easygui.enterbox("Requirement ID ?", default="DRE-DMX-FW-REQ")
+    typespec = easygui.choicebox(msg = "Type of Specification", title = "Here", 
+                             choices = ['Section','SRS','USR'], preselect=1)
 
     #convert to XML text for TestLink
     try:
-        requirement = Requirement(filename, "DRE-DMX-FW-REQ", "V0.8", "SRS")
+        requirement = Requirement(filename, docid, "V0.8", typespec)
         xml = requirement.docx_to_XML(requirement.document)
     
         print("XML================\n", xml)
     
-        f = open("toto.xml", 'w', encoding='utf-8')
+        f = open("result.xml", 'w', encoding='utf-8')
         f.write(xml)
         f.close()
     except:
