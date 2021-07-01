@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# OCJ PyDev settings
+.project
+.pydev
+.pydevproject
+.settings/
+__pycache__/
+.pytest_cache/
