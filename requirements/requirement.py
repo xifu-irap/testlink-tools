@@ -74,7 +74,13 @@ class Requirement(object):
         
         # REQUIREMENT_TYPE
         # type : 1=Informational, 2=Feature, 3=Use Case, 4=User Interface, 5=Non Functional, 6=Constraint, 7=System Function
-        
+        self.xml_type_tags =['Informational', 'Feature', 'Use Case', 'User Interface', 'Non Functional', 'Constraint', 'System Function']
+        self.xml_type_vals =[1, 2, 3, 4, 5, 6, 7]
+        self.xml_type_dict = dict(zip(self.xml_type_tags, self.xml_type_vals))
+        v = 'Use Case'
+        for key, value in self.xml_type_dict.items():
+            if (v == key):
+                print("valeur = ", value)
 
         try:
             self.document = Document(filename)
@@ -176,8 +182,14 @@ class Requirement(object):
                                     self.xml_req_vals[1] = l[0] # Title
                                     self.xml_req_vals[0] = l[1] # Reference REQ_ID
                                     self.xml_req_vals[5] = l[2] # Description
-                                    self.xml_req_vals[7] = 2 # Type
+                                    self.xml_req_vals[7] = l[3] # Type
                                     self.xml_req_vals[6] = str(l[4])[0] # Status
+                                    # Search the value corresponding to the "Type" string
+                                    for key, value in self.xml_type_dict.items():
+                                        if (l[3] == key):                  
+                                            print("valeur = ", value)
+                                            self.xml_req_vals[7] = value
+                                    
                                     req_dict = dict(zip(self.xml_req_tags, self.xml_req_vals))
                                     self.__req_to_xml(req_dict)
 
